@@ -2,14 +2,21 @@ const express = require("express");
 const app = express();
 const port = 8080;
 const path = require("path");
+
+//the code is for overriding the form POST requests to Put, Patch or Delete request
 const methodOverride = require("method-override");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 
+//the code is for template
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+
+//the code is for our static file
 app.use(express.static(path.join(__dirname, "public")));
+
+//the code is for generating the ids
 const { v4: uuidv4 } = require("uuid");
 
 let posts = [
@@ -50,7 +57,6 @@ app.patch("/posts/:id", (req, res) => {
   let reqContent = req.body.content;
   let post = posts.find((p) => id === p.id);
   post.content = reqContent;
-  console.log(post);
   res.redirect("/posts");
 });
 
