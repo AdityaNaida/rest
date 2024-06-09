@@ -2,8 +2,10 @@ const express = require("express");
 const app = express();
 const port = 8080;
 const path = require("path");
+const methodOverride = require("method-override");
 
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -37,8 +39,26 @@ app.get("/posts/new", (req, res) => {
 
 app.get("/posts/:id", (req, res) => {
   let { id } = req.params;
+  let newContent = req.body.content;
   let post = posts.find((p) => id === p.id);
+  post.content = newContent;
   res.render("show.ejs", { post });
+});
+
+app.patch("/posts/:id", (req, res) => {
+  let { id } = req.params;
+  let reqContent = req.body.content;
+  let post = posts.find((p) => id === p.id);
+  post.content = reqContent;
+  console.log(post);
+  res.redirect("/posts");
+  res.send("Patch Working");
+});
+
+app.get("/posts/:id/edit", (req, res) => {
+  let { id } = req.params;
+  let post = posts.find((p) => id === p.id);
+  res.render("edit.ejs", { post });
 });
 
 app.listen(port, () => {
